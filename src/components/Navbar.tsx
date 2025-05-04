@@ -1,15 +1,26 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Menu, X, LayoutDashboard, DollarSign, HelpCircle, Users, Mail } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, LayoutDashboard, DollarSign, HelpCircle, Users, Mail, LogIn, UserPlus } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate('/auth');
+  };
+
+  const goToDashboard = () => {
+    navigate('/dashboard');
+  };
 
   return (
     <nav className="py-4 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="container-custom flex justify-between items-center">
+      <div className="container mx-auto px-4 sm:px-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <div className="h-10 w-10 rounded-md bg-gradient-to-r from-sonicium-500 to-sonicium-700 flex items-center justify-center">
             <span className="text-white font-bold text-xl">S</span>
@@ -39,8 +50,23 @@ const Navbar = () => {
             <Mail size={16} />
             Contact
           </Link>
-          <Button variant="ghost" className="font-medium">Login</Button>
-          <Button className="bg-sonicium-600 hover:bg-sonicium-700">Sign Up</Button>
+          
+          {user ? (
+            <Button className="bg-sonicium-600 hover:bg-sonicium-700" onClick={goToDashboard}>
+              Dashboard
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" className="font-medium" onClick={handleLogin}>
+                <LogIn className="mr-2 h-4 w-4" />
+                Login
+              </Button>
+              <Button className="bg-sonicium-600 hover:bg-sonicium-700" onClick={handleLogin}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -76,8 +102,22 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="flex flex-col space-y-2 pt-2">
-              <Button variant="outline" className="w-full font-medium">Login</Button>
-              <Button className="w-full bg-sonicium-600 hover:bg-sonicium-700">Sign Up</Button>
+              {user ? (
+                <Button className="w-full bg-sonicium-600 hover:bg-sonicium-700" onClick={goToDashboard}>
+                  Dashboard
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-full font-medium" onClick={handleLogin}>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                  </Button>
+                  <Button className="w-full bg-sonicium-600 hover:bg-sonicium-700" onClick={handleLogin}>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
