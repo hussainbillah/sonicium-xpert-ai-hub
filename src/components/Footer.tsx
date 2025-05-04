@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin, Phone, Github, Youtube } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -21,17 +21,20 @@ const Footer = () => {
               The all-in-one AI-powered marketing platform for businesses looking to scale their digital presence and campaigns.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Facebook size={20} />
+              <a href="#" className="text-gray-300 hover:text-white transition-colors p-2 bg-sonicium-800 rounded-full">
+                <Facebook size={18} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Twitter size={20} />
+              <a href="#" className="text-gray-300 hover:text-white transition-colors p-2 bg-sonicium-800 rounded-full">
+                <Twitter size={18} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Linkedin size={20} />
+              <a href="#" className="text-gray-300 hover:text-white transition-colors p-2 bg-sonicium-800 rounded-full">
+                <Linkedin size={18} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Instagram size={20} />
+              <a href="#" className="text-gray-300 hover:text-white transition-colors p-2 bg-sonicium-800 rounded-full">
+                <Instagram size={18} />
+              </a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors p-2 bg-sonicium-800 rounded-full">
+                <Youtube size={18} />
               </a>
             </div>
           </div>
@@ -40,11 +43,13 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Features</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">How It Works</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Login</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Sign Up</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>Features</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>Pricing</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>How It Works</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>About</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>Contact</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>Login</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-sonicium-500 rounded-full"></span>Sign Up</a></li>
             </ul>
           </div>
           
@@ -53,16 +58,20 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Contact Us</h3>
             <div className="space-y-4">
               <div className="flex items-start">
-                <MapPin size={20} className="mr-3 text-gray-300 flex-shrink-0 mt-1" />
-                <p className="text-gray-300">Sonicium Ltd, Dhaka, Bangladesh</p>
+                <MapPin size={20} className="mr-3 text-sonicium-400 flex-shrink-0 mt-1" />
+                <p className="text-gray-300">Sonicium Ltd, Level 5, House 8, Road 14, Sector 1, Uttara, Dhaka 1230, Bangladesh</p>
               </div>
               <div className="flex items-center">
-                <Mail size={20} className="mr-3 text-gray-300" />
+                <Mail size={20} className="mr-3 text-sonicium-400" />
                 <a href="mailto:ceo@sonicium.ltd" className="text-gray-300 hover:text-white transition-colors">ceo@sonicium.ltd</a>
               </div>
               <div className="flex items-center">
-                <Phone size={20} className="mr-3 text-gray-300" />
-                <p className="text-gray-300">+8801919391942</p>
+                <Phone size={20} className="mr-3 text-sonicium-400" />
+                <a href="tel:+8801919391942" className="text-gray-300 hover:text-white transition-colors">+880 1919 391942</a>
+              </div>
+              <div className="flex items-center">
+                <Github size={20} className="mr-3 text-sonicium-400" />
+                <a href="https://github.com/sonicium" className="text-gray-300 hover:text-white transition-colors">github.com/sonicium</a>
               </div>
             </div>
           </div>
@@ -71,7 +80,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-6">Subscribe to Our Newsletter</h3>
             <p className="text-gray-300 mb-4">
-              Get the latest news and updates about SoniciumXpert
+              Get the latest news, updates, and marketing tips delivered directly to your inbox
             </p>
             <div className="flex flex-col space-y-3">
               <Input 
@@ -90,12 +99,16 @@ const Footer = () => {
         
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} SoniciumXpert by Sonicium Ltd. All rights reserved.
+            &copy; {new Date().getFullYear()} SoniciumXpert by <a href="https://sonicium.ltd" target="_blank" rel="noopener noreferrer" className="text-sonicium-400 hover:text-white">Sonicium Ltd</a>. All rights reserved.
           </p>
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap justify-center gap-4">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+            <span className="hidden md:block text-gray-600">•</span>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+            <span className="hidden md:block text-gray-600">•</span>
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+            <span className="hidden md:block text-gray-600">•</span>
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Sitemap</a>
           </div>
         </div>
       </div>

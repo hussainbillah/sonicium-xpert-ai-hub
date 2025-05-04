@@ -58,7 +58,7 @@ const InsightsSection = () => {
                     <span className="text-gray-500">Today's Target</span>
                     <span className="text-gray-700 font-medium">78%</span>
                   </div>
-                  <Progress value={78} className="h-2 bg-gray-100" indicatorClassName="bg-sonicium-500" />
+                  <Progress value={78} className="h-2 bg-gray-100" />
                 </div>
               </CardContent>
             </Card>
@@ -75,7 +75,7 @@ const InsightsSection = () => {
                     <span className="text-gray-500">Weekly Average</span>
                     <span className="text-gray-700 font-medium">92%</span>
                   </div>
-                  <Progress value={92} className="h-2 bg-gray-100" indicatorClassName="bg-green-500" />
+                  <Progress value={92} className="h-2 bg-gray-100" />
                 </div>
               </CardContent>
             </Card>
@@ -92,7 +92,7 @@ const InsightsSection = () => {
                     <span className="text-gray-500">Monthly Target</span>
                     <span className="text-gray-700 font-medium">64%</span>
                   </div>
-                  <Progress value={64} className="h-2 bg-gray-100" indicatorClassName="bg-yellow-500" />
+                  <Progress value={64} className="h-2 bg-gray-100" />
                 </div>
               </CardContent>
             </Card>
@@ -109,7 +109,7 @@ const InsightsSection = () => {
                     <span className="text-gray-500">Target</span>
                     <span className="text-gray-700 font-medium">83%</span>
                   </div>
-                  <Progress value={83} className="h-2 bg-gray-100" indicatorClassName="bg-sonicium-600" />
+                  <Progress value={83} className="h-2 bg-gray-100" />
                 </div>
               </CardContent>
             </Card>
