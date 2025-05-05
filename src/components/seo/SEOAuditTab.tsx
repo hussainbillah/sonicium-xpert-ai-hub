@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -162,15 +163,10 @@ const SEOAuditTab: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="h-64">
-                    <BarChart config={{
-                      count: { color: "#ef4444" }
-                    }}>
-                      <Bar 
-                        dataKey="count" 
-                        data={crawlErrorsData} 
-                        fill="var(--color-count)" 
-                      />
-                    </BarChart>
+                    <BarChart 
+                      data={crawlErrorsData}
+                      bars={[{ dataKey: "count", fill: "#ef4444", name: "Count" }]}
+                    />
                   </div>
                 </CardContent>
               </Card>

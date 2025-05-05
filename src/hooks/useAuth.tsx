@@ -62,10 +62,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      // Use a more generic approach since we don't know if the table exists yet
+      // Since we don't have a user_roles table yet in the database schema,
+      // we'll default to 'user' role and handle this more robustly
+      // once the database schema is set up
+      setUserRole('user');
+
+      // This is a placeholder for future database integration
+      // When the database schema is properly set up, this code can be uncommented
+      /*
       const { data, error } = await supabase
         .from('user_roles')
-        .select('*')
+        .select('role')
         .eq('user_id', userId)
         .maybeSingle();
       
@@ -80,6 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Default to user role if no explicit role found
         setUserRole('user');
       }
+      */
     } catch (error) {
       console.error('Error in fetchUserRole:', error);
       // Default to user role on error
