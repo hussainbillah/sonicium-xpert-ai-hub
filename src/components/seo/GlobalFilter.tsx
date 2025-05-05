@@ -1,13 +1,7 @@
 
 import React, { useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Globe, Smartphone, Download, Filter } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
   Select,
   SelectContent,
@@ -15,154 +9,121 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+
+interface DateRange {
+  from: Date;
+  to?: Date;
+}
+
+interface Filters {
+  dateRange: DateRange;
+  country: string;
+  device: string;
+}
 
 interface GlobalFilterProps {
-  onFilterChange?: (filters: {
-    dateRange: { from: Date | undefined; to: Date | undefined };
-    country: string;
-    device: string;
-  }) => void;
+  onFilterChange: (filters: Filters) => void;
 }
 
 const GlobalFilter: React.FC<GlobalFilterProps> = ({ onFilterChange }) => {
-  const [date, setDate] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-    to: new Date()
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    to: new Date(),
   });
-  const [country, setCountry] = useState<string>("us");
+  const [country, setCountry] = useState<string>("all");
   const [device, setDevice] = useState<string>("all");
-
-  const handleDateChange = (dateRange: { from: Date | undefined; to: Date | undefined }) => {
-    setDate(dateRange);
-    if (onFilterChange) {
-      onFilterChange({ dateRange, country, device });
-    }
-  };
-
-  const handleCountryChange = (value: string) => {
-    setCountry(value);
-    if (onFilterChange) {
-      onFilterChange({ dateRange: date, country: value, device });
-    }
-  };
-
-  const handleDeviceChange = (value: string) => {
-    setDevice(value);
-    if (onFilterChange) {
-      onFilterChange({ dateRange: date, country, device: value });
-    }
-  };
-
-  const handleDownloadPDF = () => {
-    // In a real app, this would generate and download a PDF report
-    alert("Downloading PDF report...");
+  
+  const handleApplyFilters = () => {
+    onFilterChange({
+      dateRange: dateRange,
+      country,
+      device,
+    });
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-6">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>
-              {date.from ? date.from.toLocaleDateString() : "Start date"} - 
-              {date.to ? date.to.toLocaleDateString() : "End date"}
-            </span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <CalendarComponent
-            initialFocus
-            mode="range"
-            defaultMonth={date.from}
-            selected={date}
-            onSelect={(range) => handleDateChange(range || { from: undefined, to: undefined })}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Globe className="h-4 w-4" />
-            <span>Country</span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-60">
-          <Select value={country} onValueChange={handleCountryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="us">United States</SelectItem>
-              <SelectItem value="uk">United Kingdom</SelectItem>
-              <SelectItem value="ca">Canada</SelectItem>
-              <SelectItem value="au">Australia</SelectItem>
-              <SelectItem value="global">Global</SelectItem>
-            </SelectContent>
-          </Select>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Smartphone className="h-4 w-4" />
-            <span>Device</span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-60">
-          <Select value={device} onValueChange={handleDeviceChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select device" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Devices</SelectItem>
-              <SelectItem value="mobile">Mobile</SelectItem>
-              <SelectItem value="desktop">Desktop</SelectItem>
-              <SelectItem value="tablet">Tablet</SelectItem>
-            </SelectContent>
-          </Select>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Filter className="h-4 w-4" />
-            <span>More Filters</span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="space-y-4">
-            <h4 className="font-medium">Additional Filters</h4>
-            <div className="space-y-2">
-              <h5 className="text-sm font-medium">Platform</h5>
-              <Select defaultValue="google">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="google">Google</SelectItem>
-                  <SelectItem value="bing">Bing</SelectItem>
-                  <SelectItem value="yahoo">Yahoo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+    <Card className="mb-6">
+      <CardContent className="p-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-end">
+          <div className="flex-1 space-y-1">
+            <label className="text-sm text-muted-foreground">Date Range</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange?.from ? (
+                    dateRange.to ? (
+                      <>
+                        {format(dateRange.from, "LLL dd, y")} -{" "}
+                        {format(dateRange.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(dateRange.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={setDateRange}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-        </PopoverContent>
-      </Popover>
-
-      <Button 
-        variant="default" 
-        className="ml-auto flex items-center gap-2 bg-sonicium-600 hover:bg-sonicium-700"
-        onClick={handleDownloadPDF}
-      >
-        <Download className="h-4 w-4" />
-        <span>Download PDF Report</span>
-      </Button>
-    </div>
+          
+          <div className="w-full sm:w-48 space-y-1">
+            <label className="text-sm text-muted-foreground">Country</label>
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Countries</SelectItem>
+                <SelectItem value="us">United States</SelectItem>
+                <SelectItem value="uk">United Kingdom</SelectItem>
+                <SelectItem value="ca">Canada</SelectItem>
+                <SelectItem value="au">Australia</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="w-full sm:w-48 space-y-1">
+            <label className="text-sm text-muted-foreground">Device</label>
+            <Select value={device} onValueChange={setDevice}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Device" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Devices</SelectItem>
+                <SelectItem value="desktop">Desktop</SelectItem>
+                <SelectItem value="mobile">Mobile</SelectItem>
+                <SelectItem value="tablet">Tablet</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <Button onClick={handleApplyFilters}>Apply Filters</Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

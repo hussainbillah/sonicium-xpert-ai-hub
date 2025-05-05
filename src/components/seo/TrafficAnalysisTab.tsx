@@ -1,25 +1,23 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
-import { Bar, Line, Pie } from "recharts";
+import { BarChart, LineChart, PieChart } from "@/components/ui/custom-chart";
 import { Progress } from "@/components/ui/progress";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
 // Sample data
 const monthlyTrafficData = [
-  { month: 'Jan', organic: 24500, paid: 8200, direct: 12300, referral: 6800, social: 5400 },
-  { month: 'Feb', organic: 26700, paid: 7800, direct: 13100, referral: 7200, social: 5900 },
-  { month: 'Mar', organic: 29800, paid: 9100, direct: 14500, referral: 7600, social: 6300 },
-  { month: 'Apr', organic: 31200, paid: 9600, direct: 15200, referral: 8100, social: 6800 },
-  { month: 'May', organic: 33500, paid: 10200, direct: 16400, referral: 8600, social: 7200 },
-  { month: 'Jun', organic: 32100, paid: 10800, direct: 15800, referral: 8200, social: 6900 },
-  { month: 'Jul', organic: 34800, paid: 11500, direct: 17200, referral: 8900, social: 7500 },
-  { month: 'Aug', organic: 38200, paid: 12400, direct: 18600, referral: 9700, social: 8200 },
-  { month: 'Sep', organic: 42100, paid: 13600, direct: 20500, referral: 10600, social: 9000 },
-  { month: 'Oct', organic: 45600, paid: 14900, direct: 22100, referral: 11500, social: 9800 },
-  { month: 'Nov', organic: 48200, paid: 15800, direct: 23400, referral: 12200, social: 10400 },
-  { month: 'Dec', organic: 52400, paid: 17200, direct: 25500, referral: 13300, social: 11300 },
+  { name: 'Jan', organic: 24500, paid: 8200, direct: 12300, referral: 6800, social: 5400 },
+  { name: 'Feb', organic: 26700, paid: 7800, direct: 13100, referral: 7200, social: 5900 },
+  { name: 'Mar', organic: 29800, paid: 9100, direct: 14500, referral: 7600, social: 6300 },
+  { name: 'Apr', organic: 31200, paid: 9600, direct: 15200, referral: 8100, social: 6800 },
+  { name: 'May', organic: 33500, paid: 10200, direct: 16400, referral: 8600, social: 7200 },
+  { name: 'Jun', organic: 32100, paid: 10800, direct: 15800, referral: 8200, social: 6900 },
+  { name: 'Jul', organic: 34800, paid: 11500, direct: 17200, referral: 8900, social: 7500 },
+  { name: 'Aug', organic: 38200, paid: 12400, direct: 18600, referral: 9700, social: 8200 },
+  { name: 'Sep', organic: 42100, paid: 13600, direct: 20500, referral: 10600, social: 9000 },
+  { name: 'Oct', organic: 45600, paid: 14900, direct: 22100, referral: 11500, social: 9800 },
+  { name: 'Nov', organic: 48200, paid: 15800, direct: 23400, referral: 12200, social: 10400 },
+  { name: 'Dec', organic: 52400, paid: 17200, direct: 25500, referral: 13300, social: 11300 },
 ];
 
 const trafficSourceData = [
@@ -108,54 +106,16 @@ const TrafficAnalysisTab: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-80">
-            <LineChart config={{
-              organic: { color: "#3b82f6" },
-              paid: { color: "#ef4444" },
-              direct: { color: "#22c55e" },
-              referral: { color: "#f59e0b" },
-              social: { color: "#8b5cf6" }
-            }}>
-              <Line
-                type="monotone"
-                dataKey="organic"
-                data={monthlyTrafficData}
-                name="Organic Search"
-                stroke="var(--color-organic)"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="paid"
-                data={monthlyTrafficData}
-                name="Paid Search"
-                stroke="var(--color-paid)"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="direct"
-                data={monthlyTrafficData}
-                name="Direct"
-                stroke="var(--color-direct)"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="referral"
-                data={monthlyTrafficData}
-                name="Referral"
-                stroke="var(--color-referral)"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="social"
-                data={monthlyTrafficData}
-                name="Social"
-                stroke="var(--color-social)"
-                strokeWidth={2}
-              />
-            </LineChart>
+            <LineChart 
+              data={monthlyTrafficData}
+              lines={[
+                { dataKey: "organic", stroke: "#3b82f6", name: "Organic Search" },
+                { dataKey: "paid", stroke: "#ef4444", name: "Paid Search" },
+                { dataKey: "direct", stroke: "#22c55e", name: "Direct" },
+                { dataKey: "referral", stroke: "#f59e0b", name: "Referral" },
+                { dataKey: "social", stroke: "#8b5cf6", name: "Social" }
+              ]}
+            />
           </div>
         </CardContent>
       </Card>
@@ -167,22 +127,13 @@ const TrafficAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <PieChart config={{
-                "Organic Search": { color: "#3b82f6" },
-                "Paid Search": { color: "#ef4444" },
-                "Direct": { color: "#22c55e" },
-                "Referral": { color: "#f59e0b" },
-                "Social": { color: "#8b5cf6" }
-              }}>
-                <Pie
-                  dataKey="value"
-                  nameKey="name"
-                  data={trafficSourceData}
-                  innerRadius={50}
-                  outerRadius={80}
-                  label
-                />
-              </PieChart>
+              <PieChart
+                data={trafficSourceData}
+                dataKey="value"
+                innerRadius={50}
+                outerRadius={80}
+                label
+              />
             </div>
             <div className="mt-4 space-y-3">
               {trafficSourceData.map((source, index) => (
@@ -205,20 +156,13 @@ const TrafficAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <PieChart config={{
-                "Mobile": { color: "#3b82f6" },
-                "Desktop": { color: "#22c55e" },
-                "Tablet": { color: "#f59e0b" }
-              }}>
-                <Pie
-                  dataKey="value"
-                  nameKey="name"
-                  data={deviceData}
-                  innerRadius={50}
-                  outerRadius={80}
-                  label
-                />
-              </PieChart>
+              <PieChart
+                data={deviceData}
+                dataKey="value"
+                innerRadius={50}
+                outerRadius={80}
+                label
+              />
             </div>
             <div className="mt-4 space-y-3">
               {deviceData.map((device, index) => (
@@ -296,37 +240,21 @@ const TrafficAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <BarChart config={{
-                "New": { color: "#3b82f6" },
-                "Returning": { color: "#22c55e" }
-              }}>
-                <Bar
-                  dataKey="New"
-                  data={[
-                    { month: 'Jul', New: 25800, Returning: 9000 },
-                    { month: 'Aug', New: 28300, Returning: 9900 },
-                    { month: 'Sep', New: 31200, Returning: 10900 },
-                    { month: 'Oct', New: 33800, Returning: 11800 },
-                    { month: 'Nov', New: 35700, Returning: 12500 },
-                    { month: 'Dec', New: 38800, Returning: 13600 },
-                  ]}
-                  stackId="a"
-                  fill="var(--color-New)"
-                />
-                <Bar
-                  dataKey="Returning"
-                  data={[
-                    { month: 'Jul', New: 25800, Returning: 9000 },
-                    { month: 'Aug', New: 28300, Returning: 9900 },
-                    { month: 'Sep', New: 31200, Returning: 10900 },
-                    { month: 'Oct', New: 33800, Returning: 11800 },
-                    { month: 'Nov', New: 35700, Returning: 12500 },
-                    { month: 'Dec', New: 38800, Returning: 13600 },
-                  ]}
-                  stackId="a"
-                  fill="var(--color-Returning)"
-                />
-              </BarChart>
+              <BarChart
+                data={[
+                  { name: 'Jul', New: 25800, Returning: 9000 },
+                  { name: 'Aug', New: 28300, Returning: 9900 },
+                  { name: 'Sep', New: 31200, Returning: 10900 },
+                  { name: 'Oct', New: 33800, Returning: 11800 },
+                  { name: 'Nov', New: 35700, Returning: 12500 },
+                  { name: 'Dec', New: 38800, Returning: 13600 },
+                ]}
+                bars={[
+                  { dataKey: "New", fill: "#3b82f6", stackId: "a" },
+                  { dataKey: "Returning", fill: "#22c55e", stackId: "a" }
+                ]}
+                stacked={true}
+              />
             </div>
           </CardContent>
         </Card>

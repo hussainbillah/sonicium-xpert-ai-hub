@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
-import { Bar, Line, Pie } from "recharts";
+import { LineChart, BarChart, PieChart } from "@/components/ui/custom-chart";
 import {
   Table,
   TableBody,
@@ -30,18 +28,18 @@ const backlinkTypeData = [
 ];
 
 const domainIndustryData = [
-  { industry: 'Technology', count: 215 },
-  { industry: 'Marketing', count: 189 },
-  { industry: 'E-commerce', count: 157 },
-  { industry: 'News/Media', count: 134 },
-  { industry: 'Education', count: 98 },
-  { industry: 'Finance', count: 67 },
-  { industry: 'Healthcare', count: 45 },
-  { industry: 'Other', count: 95 },
+  { name: 'Technology', count: 215 },
+  { name: 'Marketing', count: 189 },
+  { name: 'E-commerce', count: 157 },
+  { name: 'News/Media', count: 134 },
+  { name: 'Education', count: 98 },
+  { name: 'Finance', count: 67 },
+  { name: 'Healthcare', count: 45 },
+  { name: 'Other', count: 95 },
 ];
 
 const backlinkGrowthData = Array.from({ length: 12 }, (_, i) => ({
-  month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+  name: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
   count: 1500 + Math.floor(Math.random() * 20 - 5) * 30 + i * 120,
 }));
 
@@ -186,20 +184,13 @@ const BacklinkAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-48">
-              <PieChart config={{
-                "Dofollow": { color: "#22c55e" },
-                "Nofollow": { color: "#f59e0b" },
-                "Toxic": { color: "#ef4444" }
-              }}>
-                <Pie
-                  dataKey="value"
-                  nameKey="name"
-                  data={backlinkTypeData}
-                  innerRadius={40}
-                  outerRadius={80}
-                  label
-                />
-              </PieChart>
+              <PieChart
+                data={backlinkTypeData}
+                dataKey="value"
+                innerRadius={40}
+                outerRadius={80}
+                label
+              />
             </div>
             <div className="mt-4 space-y-2">
               {backlinkTypeData.map((type, index) => (
@@ -222,16 +213,10 @@ const BacklinkAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <BarChart config={{
-                count: { color: "#8b5cf6" }
-              }}>
-                <Bar 
-                  dataKey="count" 
-                  data={domainIndustryData} 
-                  fill="var(--color-count)" 
-                  name="Referring Domains"
-                />
-              </BarChart>
+              <BarChart 
+                data={domainIndustryData}
+                bars={[{ dataKey: "count", fill: "#8b5cf6", name: "Referring Domains" }]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -243,18 +228,10 @@ const BacklinkAnalysisTab: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="h-72">
-            <LineChart config={{
-              count: { color: "#3b82f6" }
-            }}>
-              <Line
-                type="monotone"
-                dataKey="count"
-                data={backlinkGrowthData}
-                name="Number of Backlinks"
-                stroke="var(--color-count)"
-                strokeWidth={2}
-              />
-            </LineChart>
+            <LineChart 
+              data={backlinkGrowthData}
+              lines={[{ dataKey: "count", stroke: "#3b82f6", name: "Number of Backlinks", strokeWidth: 2 }]}
+            />
           </div>
         </CardContent>
       </Card>

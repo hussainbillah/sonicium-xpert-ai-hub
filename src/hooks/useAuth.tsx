@@ -62,22 +62,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
+      // Use a more generic approach since we don't know if the table exists yet
       const { data, error } = await supabase
         .from('user_roles')
-        .select('role')
+        .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Error fetching user role:', error);
         return;
       }
       
-      if (data) {
+      if (data && data.role) {
         setUserRole(data.role);
+      } else {
+        // Default to user role if no explicit role found
+        setUserRole('user');
       }
     } catch (error) {
       console.error('Error in fetchUserRole:', error);
+      // Default to user role on error
+      setUserRole('user');
     }
   };
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,8 +9,7 @@ import {
 import { Check, AlertTriangle, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
-import { Bar, Line, Pie } from "recharts";
+import { BarChart, LineChart, PieChart } from "@/components/ui/custom-chart";
 
 // Sample data for graphs
 const coreWebVitalsData = [
@@ -35,15 +33,15 @@ const crawlErrorsData = [
 ];
 
 const schemaUsageData = [
-  { name: 'Product', value: 45 },
-  { name: 'Article', value: 20 },
-  { name: 'LocalBusiness', value: 15 },
-  { name: 'FAQ', value: 10 },
-  { name: 'Other', value: 10 },
+  { name: 'Product', value: 45, color: "#3b82f6" },
+  { name: 'Article', value: 20, color: "#22c55e" },
+  { name: 'LocalBusiness', value: 15, color: "#f59e0b" },
+  { name: 'FAQ', value: 10, color: "#8b5cf6" },
+  { name: 'Other', value: 10, color: "#6b7280" },
 ];
 
 const bounceRateData = Array.from({ length: 30 }, (_, i) => ({
-  date: `${i + 1}`,
+  name: `${i + 1}`,
   rate: 40 + Math.random() * 20,
 }));
 
@@ -86,18 +84,10 @@ const SEOAuditTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <BarChart config={{ 
-                lcp: { color: coreWebVitalsData[0].color },
-                fid: { color: coreWebVitalsData[1].color },
-                cls: { color: coreWebVitalsData[2].color }
-              }}>
-                <Bar 
-                  dataKey="score" 
-                  data={coreWebVitalsData} 
-                  fill="var(--color-lcp)"
-                  name="Score"
-                />
-              </BarChart>
+              <BarChart 
+                data={coreWebVitalsData}
+                bars={[{ dataKey: "score", name: "Score" }]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -108,13 +98,13 @@ const SEOAuditTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <BarChart config={{
-                mobile: { color: "#f59e0b" },
-                desktop: { color: "#3b82f6" }
-              }}>
-                <Bar dataKey="mobile" data={pageSpeedData} fill="var(--color-mobile)" name="Mobile" />
-                <Bar dataKey="desktop" data={pageSpeedData} fill="var(--color-desktop)" name="Desktop" />
-              </BarChart>
+              <BarChart 
+                data={pageSpeedData}
+                bars={[
+                  { dataKey: "mobile", fill: "#f59e0b", name: "Mobile" },
+                  { dataKey: "desktop", fill: "#3b82f6", name: "Desktop" }
+                ]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -125,22 +115,13 @@ const SEOAuditTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64 flex items-center justify-center">
-              <PieChart config={{
-                Product: { color: "#3b82f6" },
-                Article: { color: "#22c55e" },
-                LocalBusiness: { color: "#f59e0b" },
-                FAQ: { color: "#8b5cf6" },
-                Other: { color: "#6b7280" }
-              }}>
-                <Pie 
-                  dataKey="value" 
-                  data={schemaUsageData} 
-                  innerRadius={40} 
-                  outerRadius={80} 
-                  fill="#8884d8"
-                  label
-                />
-              </PieChart>
+              <PieChart 
+                data={schemaUsageData}
+                dataKey="value"
+                innerRadius={40}
+                outerRadius={80}
+                label
+              />
             </div>
           </CardContent>
         </Card>
@@ -151,17 +132,10 @@ const SEOAuditTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <LineChart config={{
-                rate: { color: "#8b5cf6" }
-              }}>
-                <Line
-                  type="monotone"
-                  dataKey="rate"
-                  data={bounceRateData}
-                  stroke="var(--color-rate)"
-                  strokeWidth={2}
-                />
-              </LineChart>
+              <LineChart 
+                data={bounceRateData}
+                lines={[{ dataKey: "rate", stroke: "#8b5cf6", strokeWidth: 2 }]}
+              />
             </div>
           </CardContent>
         </Card>

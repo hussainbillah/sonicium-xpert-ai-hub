@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BarChart, LineChart } from "@/components/ui/chart";
-import { Bar, Line } from "recharts";
+import { LineChart, BarChart } from "@/components/ui/custom-chart";
 import { Search } from "lucide-react";
 import {
   Table,
@@ -24,18 +22,18 @@ import {
 
 // Sample data for charts
 const volumeTrendData = [
-  { month: 'Jan', volume: 1200 },
-  { month: 'Feb', volume: 1400 },
-  { month: 'Mar', volume: 1800 },
-  { month: 'Apr', volume: 2200 },
-  { month: 'May', volume: 1900 },
-  { month: 'Jun', volume: 2100 },
-  { month: 'Jul', volume: 2400 },
-  { month: 'Aug', volume: 2600 },
-  { month: 'Sep', volume: 2300 },
-  { month: 'Oct', volume: 2500 },
-  { month: 'Nov', volume: 2700 },
-  { month: 'Dec', volume: 3000 },
+  { name: 'Jan', volume: 1200 },
+  { name: 'Feb', volume: 1400 },
+  { name: 'Mar', volume: 1800 },
+  { name: 'Apr', volume: 2200 },
+  { name: 'May', volume: 1900 },
+  { name: 'Jun', volume: 2100 },
+  { name: 'Jul', volume: 2400 },
+  { name: 'Aug', volume: 2600 },
+  { name: 'Sep', volume: 2300 },
+  { name: 'Oct', volume: 2500 },
+  { name: 'Nov', volume: 2700 },
+  { name: 'Dec', volume: 3000 },
 ];
 
 const keywordData = [
@@ -52,7 +50,7 @@ const keywordData = [
 ];
 
 const cpcData = keywordData.map(item => ({
-  keyword: item.keyword,
+  name: item.keyword,
   cpc: item.cpc
 }));
 
@@ -124,17 +122,10 @@ const KeywordResearchTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <LineChart config={{
-                volume: { color: "#8b5cf6" }
-              }}>
-                <Line
-                  type="monotone"
-                  dataKey="volume"
-                  data={volumeTrendData}
-                  stroke="var(--color-volume)"
-                  strokeWidth={2}
-                />
-              </LineChart>
+              <LineChart 
+                data={volumeTrendData}
+                lines={[{ dataKey: "volume", stroke: "#8b5cf6", strokeWidth: 2 }]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -145,15 +136,10 @@ const KeywordResearchTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-64">
-              <BarChart config={{
-                cpc: { color: "#22c55e" }
-              }}>
-                <Bar 
-                  dataKey="cpc" 
-                  data={cpcData} 
-                  fill="var(--color-cpc)" 
-                />
-              </BarChart>
+              <BarChart 
+                data={cpcData}
+                bars={[{ dataKey: "cpc", fill: "#22c55e", name: "CPC ($)" }]}
+              />
             </div>
           </CardContent>
         </Card>

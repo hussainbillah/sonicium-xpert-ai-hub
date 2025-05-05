@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart } from "@/components/ui/chart";
-import { Bar } from "recharts";
+import { BarChart } from "@/components/ui/custom-chart";
 import {
   Table,
   TableBody,
@@ -100,23 +98,13 @@ const CompetitorAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-80">
-              <BarChart config={{
-                domainAuthority: { color: "#3b82f6" },
-                pageAuthority: { color: "#8b5cf6" }
-              }}>
-                <Bar 
-                  dataKey="domainAuthority" 
-                  data={competitorMetrics} 
-                  name="Domain Authority"
-                  fill="var(--color-domainAuthority)" 
-                />
-                <Bar 
-                  dataKey="pageAuthority" 
-                  data={competitorMetrics} 
-                  name="Page Authority"
-                  fill="var(--color-pageAuthority)" 
-                />
-              </BarChart>
+              <BarChart 
+                data={competitorMetrics}
+                bars={[
+                  { dataKey: "domainAuthority", fill: "#3b82f6", name: "Domain Authority" },
+                  { dataKey: "pageAuthority", fill: "#8b5cf6", name: "Page Authority" }
+                ]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -127,23 +115,13 @@ const CompetitorAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-80">
-              <BarChart config={{
-                contentDepth: { color: "#22c55e" },
-                keywordCoverage: { color: "#f59e0b" }
-              }}>
-                <Bar 
-                  dataKey="contentDepth" 
-                  data={competitorMetrics} 
-                  name="Content Depth"
-                  fill="var(--color-contentDepth)" 
-                />
-                <Bar 
-                  dataKey="keywordCoverage" 
-                  data={competitorMetrics} 
-                  name="Keyword Coverage"
-                  fill="var(--color-keywordCoverage)" 
-                />
-              </BarChart>
+              <BarChart 
+                data={competitorMetrics}
+                bars={[
+                  { dataKey: "contentDepth", fill: "#22c55e", name: "Content Depth" },
+                  { dataKey: "keywordCoverage", fill: "#f59e0b", name: "Keyword Coverage" }
+                ]}
+              />
             </div>
           </CardContent>
         </Card>
@@ -231,33 +209,14 @@ const CompetitorAnalysisTab: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="h-80">
-              <BarChart config={{
-                updated30: { color: "#22c55e" },
-                updated90: { color: "#f59e0b" },
-                older: { color: "#ef4444" }
-              }}>
-                <Bar 
-                  dataKey="updated30" 
-                  data={contentFreshness} 
-                  name="Last 30 Days"
-                  stackId="stack"
-                  fill="var(--color-updated30)" 
-                />
-                <Bar 
-                  dataKey="updated90" 
-                  data={contentFreshness} 
-                  name="30-90 Days"
-                  stackId="stack"
-                  fill="var(--color-updated90)" 
-                />
-                <Bar 
-                  dataKey="older" 
-                  data={contentFreshness} 
-                  name="Older Content"
-                  stackId="stack"
-                  fill="var(--color-older)" 
-                />
-              </BarChart>
+              <BarChart 
+                data={contentFreshness}
+                bars={[
+                  { dataKey: "updated30", fill: "#22c55e", name: "Last 30 Days" },
+                  { dataKey: "updated90", fill: "#f59e0b", name: "30-90 Days" },
+                  { dataKey: "older", fill: "#ef4444", name: "Older Content" }
+                ]}
+              />
             </div>
           </CardContent>
         </Card>

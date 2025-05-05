@@ -29,38 +29,59 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({ onUploadSuccess }) => {
       setUploading(true);
       setUploadProgress(0);
       
-      const { data, error } = await supabase.storage
-        .from('media')
-        .upload(filePath, file, {
-          upsert: true,
-          onUploadProgress: (progress) => {
-            const percent = Math.round((progress.loaded / progress.total) * 100);
-            setUploadProgress(percent);
-          },
+      // Use a manual progress tracking approach
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = async () => {
+        try {
+          const { data, error } = await supabase.storage
+            .from('media')
+            .upload(filePath, file, {
+              upsert: true
+            });
+          
+          if (error) throw error;
+          
+          // Get the public URL
+          const { data: publicUrlData } = supabase.storage
+            .from('media')
+            .getPublicUrl(filePath);
+          
+          if (publicUrlData && publicUrlData.publicUrl) {
+            onUploadSuccess(publicUrlData.publicUrl);
+            toast({
+              title: "Upload successful",
+              description: "Media file has been uploaded"
+            });
+          }
+        } catch (error: any) {
+          console.error('Error uploading file:', error);
+          toast({
+            title: "Upload failed",
+            description: error.message || "Failed to upload file",
+            variant: "destructive",
+          });
+        } finally {
+          setUploading(false);
+          setUploadProgress(0);
+        }
+      };
+      
+      // Simulate progress for better UX
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          const newProgress = Math.min(prev + 5, 95);
+          if (newProgress === 95) clearInterval(interval);
+          return newProgress;
         });
-      
-      if (error) throw error;
-      
-      // Get the public URL
-      const { data: publicUrlData } = supabase.storage
-        .from('media')
-        .getPublicUrl(filePath);
-      
-      if (publicUrlData && publicUrlData.publicUrl) {
-        onUploadSuccess(publicUrlData.publicUrl);
-        toast({
-          title: "Upload successful",
-          description: "Media file has been uploaded"
-        });
-      }
+      }, 100);
     } catch (error: any) {
-      console.error('Error uploading file:', error);
+      console.error('Error reading file:', error);
       toast({
         title: "Upload failed",
-        description: error.message || "Failed to upload file",
+        description: error.message || "Failed to read file",
         variant: "destructive",
       });
-    } finally {
       setUploading(false);
       setUploadProgress(0);
     }
