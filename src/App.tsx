@@ -15,6 +15,7 @@ import Media from "./pages/Media";
 import Profile from "./pages/Profile";
 import Subscription from "./pages/Subscription";
 import Admin from "./pages/Admin";
+import SEODashboard from "./pages/SEODashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/seo-dashboard" element={<SEODashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

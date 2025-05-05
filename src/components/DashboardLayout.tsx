@@ -11,7 +11,8 @@ import {
   CreditCard,
   Settings,
   LogOut,
-  Users
+  Users,
+  LineChart
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -27,6 +28,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
     { name: 'Campaigns', icon: <FileEdit size={20} />, path: '/campaigns' },
     { name: 'Analytics', icon: <BarChart3 size={20} />, path: '/analytics' },
+    { name: 'SEO Dashboard', icon: <LineChart size={20} />, path: '/seo-dashboard' },
     { name: 'Media', icon: <ImageIcon size={20} />, path: '/media' },
     { name: 'Profile', icon: <User size={20} />, path: '/profile' },
     { name: 'Subscription', icon: <CreditCard size={20} />, path: '/subscription' },
