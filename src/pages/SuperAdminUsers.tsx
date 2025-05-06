@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -297,7 +296,7 @@ const SuperAdminUsers = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.status === 'active' ? 'success' : 'secondary'} className={user.status === 'active' ? 'bg-green-500 text-white hover:bg-green-600' : ''}>
+                        <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className={user.status === 'active' ? 'bg-green-500 text-white hover:bg-green-600' : ''}>
                           {user.status === 'active' ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
