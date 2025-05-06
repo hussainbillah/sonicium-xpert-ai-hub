@@ -3,8 +3,15 @@ import React from 'react';
 import PerformanceChart from './PerformanceChart';
 import StatsCard from './StatsCard';
 
+interface StatsData {
+  title: string;
+  value: string;
+  change: string;
+  timeframe: string;
+}
+
 const ChartSection: React.FC = () => {
-  const statsData = [
+  const statsData: StatsData[] = [
     { title: 'Total Campaigns', value: '24', change: '+12%', timeframe: 'from last month' },
     { title: 'Avg. CTR', value: '3.6%', change: '+0.8%', timeframe: 'from last month' },
     { title: 'Conversion Rate', value: '2.4%', change: '+0.6%', timeframe: 'from last month' },

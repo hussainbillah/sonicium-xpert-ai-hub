@@ -18,6 +18,11 @@ import Admin from "./pages/Admin";
 import SEODashboard from "./pages/SEODashboard";
 import MarketingDashboard from "./pages/MarketingDashboard";
 import NotFound from "./pages/NotFound";
+// Super Admin imports
+import SuperAdminLogin from "./pages/SuperAdminLogin";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import SuperAdminPages from "./pages/SuperAdminPages";
+import SuperAdminUsers from "./pages/SuperAdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +47,13 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/seo-dashboard" element={<SEODashboard />} />
             <Route path="/marketing-dashboard" element={<MarketingDashboard />} />
+            
+            {/* Super Admin Routes */}
+            <Route path="/super-admin/login" element={<SuperAdminLogin />} />
+            <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
+            <Route path="/super-admin/pages" element={<SuperAdminPages />} />
+            <Route path="/super-admin/admins" element={<SuperAdminUsers />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
