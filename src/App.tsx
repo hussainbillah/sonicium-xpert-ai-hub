@@ -44,11 +44,29 @@ const mockCampaignData = [
   }
 ];
 
+const mockSubscriptionData = [
+  {
+    id: '1',
+    user_id: 'user-1',
+    plan_id: 'plan-1',
+    plan_name: 'Professional',
+    status: 'active',
+    amount: 49.99,
+    payment_provider: 'stripe',
+    payment_id: 'pay_1234567890',
+    start_date: '2025-04-01T00:00:00Z',
+    end_date: '2026-04-01T00:00:00Z',
+    created_at: '2025-04-01T00:00:00Z',
+    updated_at: '2025-04-01T00:00:00Z'
+  }
+];
+
 // Create a global mock object that can be used in place of real database calls
 window.__MOCK_DATA__ = {
   campaigns: mockCampaignData,
   profiles: [],
-  analytics: []
+  analytics: [],
+  subscriptions: mockSubscriptionData
 };
 
 const queryClient = new QueryClient();

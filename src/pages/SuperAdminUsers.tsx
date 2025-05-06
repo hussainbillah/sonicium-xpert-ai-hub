@@ -1,574 +1,486 @@
 
-import React, { useState } from 'react';
-import SuperAdminLayout from '@/components/SuperAdminLayout';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { PenSquare, Search, Plus, UserCog, Trash2, MoreVertical, CheckCircle, XCircle } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import SuperAdminLayout from '@/components/SuperAdminLayout';
+import { useToast } from '@/components/ui/use-toast';
+
+type AdminRole = "superadmin" | "admin" | "editor";
+type AdminStatus = "active" | "inactive";
 
 interface AdminUser {
   id: string;
   fullName: string;
   email: string;
-  role: 'superadmin' | 'admin' | 'editor';
-  status: 'active' | 'inactive';
+  role: AdminRole;
+  status: AdminStatus;
   lastLogin: string;
 }
 
-const SuperAdminUsers: React.FC = () => {
+const SuperAdminUsers = () => {
   const { toast } = useToast();
-  
-  // Sample data for admin users
-  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([
-    {
-      id: '1',
-      fullName: 'Jane Smith',
-      email: 'wnnbdonline@gmail.com',
-      role: 'superadmin',
-      status: 'active',
-      lastLogin: '2025-05-05',
-    },
-    {
-      id: '2',
-      fullName: 'John Doe',
-      email: 'john@example.com',
-      role: 'admin',
-      status: 'active',
-      lastLogin: '2025-05-03',
-    },
-    {
-      id: '3',
-      fullName: 'Sarah Williams',
-      email: 'sarah@example.com',
-      role: 'editor',
-      status: 'inactive',
-      lastLogin: '2025-04-28',
-    },
-  ]);
-
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Form state
-  const [formData, setFormData] = useState({
-    id: '',
+  const [formData, setFormData] = useState<Omit<AdminUser, 'id' | 'lastLogin'> & { id?: string, password?: string }>({
     fullName: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     role: 'admin',
-    status: true,
+    status: 'active',
+    password: '',
   });
+
+  useEffect(() => {
+    // Sample data
+    const sampleUsers: AdminUser[] = [
+      {
+        id: '1',
+        fullName: 'Administrator',
+        email: 'wnnbdonline@gmail.com',
+        role: 'superadmin',
+        status: 'active',
+        lastLogin: '2025-05-06T08:30:00Z',
+      },
+      {
+        id: '2',
+        fullName: 'Jane Smith',
+        email: 'jane@example.com',
+        role: 'admin',
+        status: 'active',
+        lastLogin: '2025-05-05T14:45:00Z',
+      },
+      {
+        id: '3',
+        fullName: 'Bob Johnson',
+        email: 'bob@example.com',
+        role: 'editor',
+        status: 'inactive',
+        lastLogin: '2025-04-28T09:15:00Z',
+      }
+    ];
+    
+    setUsers(sampleUsers);
+  }, []);
+
+  const filteredUsers = users.filter(user => 
+    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleRoleChange = (value: string) => {
-    setFormData({ ...formData, role: value });
-  };
-
-  const handleStatusChange = (checked: boolean) => {
-    setFormData({ ...formData, status: checked });
-  };
-
-  const handleCreateUser = () => {
-    // Password validation
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (formData.password.length < 8) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Email validation
-    if (!formData.email.includes('@')) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const newUser: AdminUser = {
-      id: Date.now().toString(),
-      fullName: formData.fullName,
-      email: formData.email,
-      role: formData.role as 'superadmin' | 'admin' | 'editor',
-      status: formData.status ? 'active' : 'inactive',
-      lastLogin: 'Never',
-    };
-    
-    setAdminUsers([...adminUsers, newUser]);
-    
-    toast({
-      title: "Success",
-      description: "Admin user created successfully.",
-    });
-    
-    // Reset form
     setFormData({
-      id: '',
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'admin',
-      status: true,
+      ...formData,
+      [name]: value
     });
-    
-    setIsCreateDialogOpen(false);
   };
 
-  const handleUpdateUser = () => {
-    // Email validation
-    if (!formData.email.includes('@')) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Password validation if provided
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (formData.password && formData.password.length < 8) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 8 characters long.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const updatedUsers = adminUsers.map(user => {
-      if (user.id === formData.id) {
-        return {
-          ...user,
-          fullName: formData.fullName,
-          email: formData.email,
-          role: formData.role as 'superadmin' | 'admin' | 'editor',
-          status: formData.status ? 'active' : 'inactive',
-        };
-      }
-      return user;
-    });
-    
-    setAdminUsers(updatedUsers);
-    
-    toast({
-      title: "Success",
-      description: "Admin user updated successfully.",
-    });
-    
-    // Reset form
+  const handleRoleChange = (role: AdminRole) => {
     setFormData({
-      id: '',
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'admin',
-      status: true,
+      ...formData,
+      role
     });
-    
-    setIsEditDialogOpen(false);
   };
 
-  const handleDeleteUser = () => {
-    if (currentUser) {
-      // Prevent deleting default super admin
-      if (currentUser.email === 'wnnbdonline@gmail.com') {
-        toast({
-          title: "Error",
-          description: "Cannot delete the default super admin account.",
-          variant: "destructive",
-        });
-        setIsDeleteDialogOpen(false);
-        return;
-      }
-      
-      const filteredUsers = adminUsers.filter(user => user.id !== currentUser.id);
-      setAdminUsers(filteredUsers);
-      
-      toast({
-        title: "Success",
-        description: "Admin user deleted successfully.",
-      });
-      
-      setCurrentUser(null);
-      setIsDeleteDialogOpen(false);
-    }
+  const handleStatusChange = (status: AdminStatus) => {
+    setFormData({
+      ...formData,
+      status
+    });
   };
 
-  const handleEditClick = (user: AdminUser) => {
+  const handleAddUser = () => {
+    resetForm();
+    setIsEditMode(false);
+    setIsDialogOpen(true);
+  };
+
+  const handleEditUser = (user: AdminUser) => {
     setFormData({
       id: user.id,
       fullName: user.fullName,
       email: user.email,
-      password: '',
-      confirmPassword: '',
       role: user.role,
-      status: user.status === 'active',
+      status: user.status,
+      password: '', // Leave blank for edit mode
     });
-    setIsEditDialogOpen(true);
+    setIsEditMode(true);
+    setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (user: AdminUser) => {
-    setCurrentUser(user);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const toggleUserStatus = (id: string) => {
-    // Prevent toggling default super admin
-    const user = adminUsers.find(user => user.id === id);
-    if (user && user.email === 'wnnbdonline@gmail.com') {
+  const handleSaveUser = () => {
+    if (!formData.fullName || !formData.email) {
       toast({
         title: "Error",
-        description: "Cannot modify the default super admin account.",
-        variant: "destructive",
+        description: "Name and email are required fields.",
+        variant: "destructive"
       });
       return;
     }
-    
-    const updatedUsers = adminUsers.map(user => {
-      if (user.id === id) {
-        return {
-          ...user,
-          status: user.status === 'active' ? 'inactive' : 'active',
-        };
-      }
-      return user;
+
+    if (!isEditMode && !formData.password) {
+      toast({
+        title: "Error",
+        description: "Password is required for new users.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (isEditMode) {
+      // Update existing user
+      const updatedUsers = users.map(user => 
+        user.id === formData.id 
+          ? { 
+              ...user, 
+              fullName: formData.fullName,
+              email: formData.email,
+              role: formData.role,
+              status: formData.status
+            } 
+          : user
+      );
+      
+      setUsers(updatedUsers);
+      toast({
+        title: "Success",
+        description: "Admin user updated successfully."
+      });
+    } else {
+      // Add new user
+      const newUser: AdminUser = {
+        id: `user-${Date.now()}`,
+        fullName: formData.fullName,
+        email: formData.email,
+        role: formData.role,
+        status: formData.status,
+        lastLogin: 'Never'
+      };
+      
+      setUsers([...users, newUser]);
+      toast({
+        title: "Success",
+        description: "Admin user created successfully."
+      });
+    }
+
+    setIsDialogOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      fullName: '',
+      email: '',
+      role: 'admin',
+      status: 'active',
+      password: '',
     });
+  };
+
+  const handleDeleteUser = (id: string) => {
+    setUserToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteUser = () => {
+    if (userToDelete) {
+      const updatedUsers = users.filter(user => user.id !== userToDelete);
+      setUsers(updatedUsers);
+      toast({
+        title: "Success",
+        description: "Admin user deleted successfully."
+      });
+      setIsDeleteDialogOpen(false);
+      setUserToDelete(null);
+    }
+  };
+
+  const toggleUserStatus = (id: string, currentStatus: AdminStatus) => {
+    const newStatus: AdminStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    const updatedUsers = users.map(user => 
+      user.id === id ? { ...user, status: newStatus } : user
+    );
     
-    setAdminUsers(updatedUsers);
+    setUsers(updatedUsers);
+    toast({
+      title: "Status Changed",
+      description: `User is now ${newStatus}.`
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    if (dateString === 'Never') return 'Never';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
     <SuperAdminLayout currentPage="Admin Users">
-      <div className="flex flex-col space-y-4">
-        <div className="flex justify-between items-center">
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold">Admin User Management</h2>
-            <p className="text-sm text-gray-500">Manage admin users and their permissions</p>
+            <h1 className="text-2xl font-bold">Admin User Management</h1>
+            <p className="text-muted-foreground">Manage users with admin access to your platform</p>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <Plus size={18} className="mr-2" />
-                Add Admin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create New Admin User</DialogTitle>
-                <DialogDescription>
-                  Fill in the details to create a new admin user.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input 
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      placeholder="John Doe"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="john@example.com"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <Input 
-                        id="password"
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        placeholder="••••••••"
-                        required
-                        className="pr-10"
-                      />
-                      <button 
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input 
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      placeholder="••••••••"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select 
-                      value={formData.role} 
-                      onValueChange={handleRoleChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="superadmin">Super Admin</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="editor">Editor</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="status">Active</Label>
-                    <Switch 
-                      id="status"
-                      checked={formData.status}
-                      onCheckedChange={handleStatusChange}
-                    />
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreateUser}>Create User</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search users..."
+                className="pl-8 w-full sm:w-[250px]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button onClick={handleAddUser}>
+              <Plus className="mr-2 h-4 w-4" /> Add Admin
+            </Button>
+          </div>
         </div>
 
         <Card>
-          <CardContent className="pt-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3">Name</th>
-                    <th className="px-6 py-3">Email</th>
-                    <th className="px-6 py-3">Role</th>
-                    <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Last Login</th>
-                    <th className="px-6 py-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adminUsers.map((user) => (
-                    <tr key={user.id} className="bg-white border-b hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium">{user.fullName}</td>
-                      <td className="px-6 py-4">{user.email}</td>
-                      <td className="px-6 py-4">
-                        <Badge className={
-                          user.role === 'superadmin' ? 'bg-purple-600' : 
-                          user.role === 'admin' ? 'bg-blue-600' : 'bg-green-600'
-                        }>
-                          {user.role === 'superadmin' ? 'Super Admin' : 
-                           user.role === 'admin' ? 'Admin' : 'Editor'}
+          <CardHeader>
+            <CardTitle>Administrators</CardTitle>
+            <CardDescription>All users with administrative access to the platform</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Last Login</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-6">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <UserCog className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-muted-foreground">No admin users found</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.fullName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Badge variant={user.role === 'superadmin' ? 'destructive' : (user.role === 'admin' ? 'default' : 'outline')}>
+                          {user.role === 'superadmin' ? 'Super Admin' : (user.role === 'admin' ? 'Admin' : 'Editor')}
                         </Badge>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Switch 
-                          checked={user.status === 'active'}
-                          onCheckedChange={() => toggleUserStatus(user.id)}
-                          disabled={user.email === 'wnnbdonline@gmail.com'}
-                        />
-                      </td>
-                      <td className="px-6 py-4">{user.lastLogin}</td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleEditClick(user)}
-                            disabled={user.email === 'wnnbdonline@gmail.com'}
-                          >
-                            <Pencil size={16} />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="text-red-500"
-                            onClick={() => handleDeleteClick(user)}
-                            disabled={user.email === 'wnnbdonline@gmail.com'}
-                          >
-                            <Trash2 size={16} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={user.status === 'active' ? 'success' : 'secondary'} className={user.status === 'active' ? 'bg-green-500 text-white hover:bg-green-600' : ''}>
+                          {user.status === 'active' ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{formatDate(user.lastLogin)}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                              <PenSquare className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => toggleUserStatus(user.id, user.status)}>
+                              {user.status === 'active' ? (
+                                <>
+                                  <XCircle className="mr-2 h-4 w-4" />
+                                  Deactivate
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Activate
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              className="text-red-600" 
+                              onClick={() => handleDeleteUser(user.id)}
+                              disabled={user.email === 'wnnbdonline@gmail.com'} // Prevent deleting the default super admin
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Admin User</DialogTitle>
-            <DialogDescription>
-              Update admin user information.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 gap-4">
+        {/* Add/Edit User Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          if (!open) setIsDialogOpen(false);
+        }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{isEditMode ? 'Edit Admin User' : 'Add New Admin User'}</DialogTitle>
+              <DialogDescription>
+                {isEditMode ? 'Update the details of an existing admin user.' : 'Create a new user with admin privileges.'}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-fullName">Full Name</Label>
-                <Input 
-                  id="edit-fullName"
+                <label htmlFor="fullName" className="text-sm font-medium">Full Name</label>
+                <Input
+                  id="fullName"
                   name="fullName"
+                  placeholder="John Doe"
                   value={formData.fullName}
                   onChange={handleInputChange}
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="edit-email">Email</Label>
-                <Input 
-                  id="edit-email"
+                <label htmlFor="email" className="text-sm font-medium">Email Address</label>
+                <Input
+                  id="email"
                   name="email"
                   type="email"
+                  placeholder="john@example.com"
                   value={formData.email}
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="edit-password">New Password</Label>
-                  <span className="text-xs text-gray-500">(leave blank to keep unchanged)</span>
-                </div>
-                <div className="relative">
-                  <Input 
-                    id="edit-password"
+
+              {!isEditMode && (
+                <div className="space-y-2">
+                  <label htmlFor="password" className="text-sm font-medium">Password</label>
+                  <Input
+                    id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type="password"
+                    placeholder="••••••••"
                     value={formData.password}
                     onChange={handleInputChange}
-                    placeholder="••••••••"
-                    className="pr-10"
                   />
-                  <button 
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Role</label>
+                <div className="flex space-x-2">
+                  <Button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                    onClick={() => setShowPassword(!showPassword)}
+                    variant={formData.role === 'editor' ? 'default' : 'outline'}
+                    onClick={() => handleRoleChange('editor')}
+                    className="flex-1"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                    Editor
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={formData.role === 'admin' ? 'default' : 'outline'}
+                    onClick={() => handleRoleChange('admin')}
+                    className="flex-1"
+                  >
+                    Admin
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={formData.role === 'superadmin' ? 'default' : 'outline'}
+                    onClick={() => handleRoleChange('superadmin')}
+                    className="flex-1"
+                  >
+                    Super Admin
+                  </Button>
                 </div>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="edit-confirmPassword">Confirm New Password</Label>
-                <Input 
-                  id="edit-confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-role">Role</Label>
-                <Select 
-                  value={formData.role} 
-                  onValueChange={handleRoleChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="superadmin">Super Admin</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="editor">Editor</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="edit-status">Active</Label>
-                <Switch 
-                  id="edit-status"
-                  checked={formData.status}
-                  onCheckedChange={handleStatusChange}
-                />
+                <label className="text-sm font-medium">Status</label>
+                <div className="flex space-x-2">
+                  <Button
+                    type="button"
+                    variant={formData.status === 'active' ? 'default' : 'outline'}
+                    onClick={() => handleStatusChange('active')}
+                    className="flex-1"
+                  >
+                    Active
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={formData.status === 'inactive' ? 'default' : 'outline'}
+                    onClick={() => handleStatusChange('inactive')}
+                    className="flex-1"
+                  >
+                    Inactive
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleUpdateUser}>Update User</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Admin User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete "{currentUser?.fullName}"? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteUser}>Delete</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveUser}>
+                {isEditMode ? 'Save Changes' : 'Create User'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you sure?</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete the user.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDeleteUser}>
+                Delete User
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </SuperAdminLayout>
   );
 };

@@ -1,13 +1,22 @@
+
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
+} from "@/components/ui/chart";
+import { LineChart, BarChart, PieChart } from "@/components/ui/custom-chart";
+import { getMockData } from "@/utils/mockDatabaseHelper";
 
 const Analytics = () => {
   const { user } = useAuth();
@@ -66,35 +75,13 @@ const Analytics = () => {
       
       // When database tables are set up, uncomment this code:
       /*
-      // Build the query based on the timeframe
-      let query = supabase
-        .from('analytics')
-        .select('*')
-        .eq('user_id', user?.id);
-        
-      // Add timeframe filter
-      if (timeframe === '7days') {
-        const date = new Date();
-        date.setDate(date.getDate() - 7);
-        query = query.gte('created_at', date.toISOString());
-      } else if (timeframe === '30days') {
-        const date = new Date();
-        date.setDate(date.getDate() - 30);
-        query = query.gte('created_at', date.toISOString());
-      } else if (timeframe === '90days') {
-        const date = new Date();
-        date.setDate(date.getDate() - 90);
-        query = query.gte('created_at', date.toISOString());
-      }
+      // Use mock data helper for now
+      const analyticsData = getMockData('analytics');
       
-      const { data, error } = await query;
+      // Add timeframe filter logic here
       
-      if (error) throw error;
-      
-      // Process the data for charts
-      // This would depend on your exact data structure
-      const processedData = processAnalyticsData(data);
-      setAnalyticsData(processedData);
+      setAnalyticsData(processAnalyticsData(analyticsData));
+      setLoading(false);
       */
     } catch (error) {
       console.error('Error fetching analytics:', error);
@@ -139,6 +126,14 @@ const Analytics = () => {
         },
       },
     };
+  };
+
+  // Function to create chart data for the custom-chart components
+  const createChartData = (labels: string[], dataValues: number[]) => {
+    return labels.map((label, index) => ({
+      name: label,
+      value: dataValues[index]
+    }));
   };
 
   return (
@@ -192,9 +187,13 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Impressions Over Time</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.impressions ? (
-                      <LineChart labels={analyticsData.impressions.labels} data={analyticsData.impressions.data} />
+                      <LineChart 
+                        data={createChartData(analyticsData.impressions.labels, analyticsData.impressions.data)}
+                        lines={[{ dataKey: 'value', stroke: '#4f46e5', name: 'Impressions' }]}
+                        xAxisDataKey="name"
+                      />
                     ) : (
                       <p>No data available for impressions.</p>
                     )}
@@ -207,9 +206,13 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Clicks Over Time</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.clicks ? (
-                      <LineChart labels={analyticsData.clicks.labels} data={analyticsData.clicks.data} />
+                      <LineChart 
+                        data={createChartData(analyticsData.clicks.labels, analyticsData.clicks.data)}
+                        lines={[{ dataKey: 'value', stroke: '#22c55e', name: 'Clicks' }]}
+                        xAxisDataKey="name"
+                      />
                     ) : (
                       <p>No data available for clicks.</p>
                     )}
@@ -222,9 +225,13 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Conversions Over Time</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.conversions ? (
-                      <LineChart labels={analyticsData.conversions.labels} data={analyticsData.conversions.data} />
+                      <LineChart 
+                        data={createChartData(analyticsData.conversions.labels, analyticsData.conversions.data)}
+                        lines={[{ dataKey: 'value', stroke: '#f59e0b', name: 'Conversions' }]}
+                        xAxisDataKey="name"
+                      />
                     ) : (
                       <p>No data available for conversions.</p>
                     )}
@@ -237,9 +244,14 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Platform Distribution</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.platforms ? (
-                      <PieChart labels={analyticsData.platforms.labels} data={analyticsData.platforms.data} />
+                      <PieChart 
+                        data={createChartData(analyticsData.platforms.labels, analyticsData.platforms.data)}
+                        dataKey="value"
+                        nameKey="name"
+                        colors={['#4f46e5', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6']}
+                      />
                     ) : (
                       <p>No data available for platforms.</p>
                     )}
@@ -252,9 +264,14 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Device Distribution</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.devices ? (
-                      <PieChart labels={analyticsData.devices.labels} data={analyticsData.devices.data} />
+                      <PieChart 
+                        data={createChartData(analyticsData.devices.labels, analyticsData.devices.data)}
+                        dataKey="value"
+                        nameKey="name"
+                        colors={['#4f46e5', '#22c55e', '#f59e0b']}
+                      />
                     ) : (
                       <p>No data available for devices.</p>
                     )}
@@ -267,9 +284,13 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Age Distribution</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.demographics?.age ? (
-                      <BarChart labels={analyticsData.demographics.age.labels} data={analyticsData.demographics.age.data} />
+                      <BarChart 
+                        data={createChartData(analyticsData.demographics.age.labels, analyticsData.demographics.age.data)}
+                        bars={[{ dataKey: 'value', fill: '#4f46e5', name: 'Users' }]}
+                        xAxisDataKey="name"
+                      />
                     ) : (
                       <p>No data available for age demographics.</p>
                     )}
@@ -280,9 +301,13 @@ const Analytics = () => {
                   <CardHeader>
                     <CardTitle>Gender Distribution</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="h-80">
                     {analyticsData?.demographics?.gender ? (
-                      <BarChart labels={analyticsData.demographics.gender.labels} data={analyticsData.demographics.gender.data} />
+                      <BarChart 
+                        data={createChartData(analyticsData.demographics.gender.labels, analyticsData.demographics.gender.data)}
+                        bars={[{ dataKey: 'value', fill: '#22c55e', name: 'Users' }]}
+                        xAxisDataKey="name"
+                      />
                     ) : (
                       <p>No data available for gender demographics.</p>
                     )}
