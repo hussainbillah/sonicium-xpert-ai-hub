@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { getMockData } from "@/utils/mockDatabaseHelper";
 
 // Sample data for the charts
 const chartData = [
@@ -49,6 +50,17 @@ const Dashboard = () => {
 
   const fetchCampaigns = async () => {
     try {
+      // Use mock data until database tables are set up
+      const mockCampaigns = getMockData('campaigns');
+      setCampaigns(mockCampaigns);
+      setStats(prev => ({ ...prev, totalCampaigns: mockCampaigns.length || 0 }));
+      setStats(prev => ({ 
+        ...prev, 
+        activeCampaigns: mockCampaigns.filter((campaign: any) => campaign.status === 'active').length || 0 
+      }));
+
+      // When database tables are set up, uncomment this code:
+      /*
       const { data, error } = await supabase
         .from('ad_campaigns')
         .select('*')
@@ -61,6 +73,7 @@ const Dashboard = () => {
         ...prev, 
         activeCampaigns: data?.filter(campaign => campaign.status === 'active').length || 0 
       }));
+      */
     } catch (error) {
       console.error('Error fetching campaigns:', error);
     }
@@ -68,6 +81,25 @@ const Dashboard = () => {
 
   const fetchAnalytics = async () => {
     try {
+      // Use mock analytics data
+      const mockAnalytics = [
+        { impressions: 5000, clicks: 250, conversions: 25 },
+        { impressions: 4500, clicks: 220, conversions: 22 }
+      ];
+      
+      const totalImpressions = mockAnalytics.reduce((sum, item) => sum + item.impressions, 0);
+      const totalClicks = mockAnalytics.reduce((sum, item) => sum + item.clicks, 0);
+      const conversionRate = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+      
+      setStats({
+        ...stats,
+        totalImpressions,
+        totalClicks,
+        conversionRate
+      });
+
+      // When database tables are set up, uncomment this code:
+      /*
       const { data, error } = await supabase
         .from('analytics')
         .select('impressions, clicks, conversions')
@@ -87,6 +119,7 @@ const Dashboard = () => {
           conversionRate
         });
       }
+      */
     } catch (error) {
       console.error('Error fetching analytics:', error);
     }

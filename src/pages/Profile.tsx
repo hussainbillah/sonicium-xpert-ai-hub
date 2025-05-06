@@ -43,6 +43,21 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
+      
+      // Create a mock profile since database tables aren't set up yet
+      const mockProfile: UserProfile = {
+        id: user?.id || 'mock-id',
+        full_name: user?.user_metadata?.full_name || 'Mock User',
+        website: null,
+        avatar_url: null,
+        company: null,
+        social_links: {},
+      };
+      
+      setProfile(mockProfile);
+
+      // When database tables are set up, uncomment this code:
+      /*
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -75,6 +90,7 @@ const Profile = () => {
           
         if (insertError) throw insertError;
       }
+      */
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -114,6 +130,17 @@ const Profile = () => {
     try {
       setSaving(true);
       
+      // Mock saving since database tables aren't set up yet
+      setTimeout(() => {
+        toast({
+          title: "Success",
+          description: "Profile updated successfully (mock)"
+        });
+        setSaving(false);
+      }, 1000);
+
+      // When database tables are set up, uncomment this code:
+      /*
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -131,6 +158,7 @@ const Profile = () => {
         title: "Success",
         description: "Profile updated successfully"
       });
+      */
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -138,7 +166,6 @@ const Profile = () => {
         description: "Failed to update profile",
         variant: "destructive",
       });
-    } finally {
       setSaving(false);
     }
   };
@@ -147,11 +174,29 @@ const Profile = () => {
     if (!e.target.files || e.target.files.length === 0) return;
     
     const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const filePath = `avatars/${user?.id}.${fileExt}`;
     
     try {
       setAvatarUploading(true);
+      
+      // Mock avatar upload since storage buckets aren't set up yet
+      setTimeout(() => {
+        setProfile(prev => prev ? { 
+          ...prev, 
+          avatar_url: URL.createObjectURL(file) 
+        } : null);
+        
+        toast({
+          title: "Success",
+          description: "Profile picture updated (mock)"
+        });
+        
+        setAvatarUploading(false);
+      }, 1500);
+
+      // When storage buckets are set up, uncomment this code:
+      /*
+      const fileExt = file.name.split('.').pop();
+      const filePath = `avatars/${user?.id}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('media')
@@ -181,6 +226,7 @@ const Profile = () => {
           description: "Profile picture updated"
         });
       }
+      */
     } catch (error: any) {
       console.error('Error uploading avatar:', error);
       toast({

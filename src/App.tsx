@@ -24,6 +24,33 @@ import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import SuperAdminPages from "./pages/SuperAdminPages";
 import SuperAdminUsers from "./pages/SuperAdminUsers";
 
+// Create a mock database provider to handle the current lack of database tables
+const mockCampaignData = [
+  {
+    id: '1',
+    name: 'Summer Sale 2025',
+    platform: 'Facebook',
+    budget: 1500,
+    status: 'active',
+    created_at: '2025-05-01T00:00:00Z',
+  },
+  {
+    id: '2',
+    name: 'Product Launch',
+    platform: 'Google',
+    budget: 2000,
+    status: 'paused',
+    created_at: '2025-05-02T00:00:00Z',
+  }
+];
+
+// Create a global mock object that can be used in place of real database calls
+window.__MOCK_DATA__ = {
+  campaigns: mockCampaignData,
+  profiles: [],
+  analytics: []
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (

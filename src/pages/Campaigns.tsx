@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useToast } from "@/components/ui/use-toast";
+import { getMockData } from "@/utils/mockDatabaseHelper";
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -39,6 +40,13 @@ const Campaigns = () => {
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
+      
+      // Use mock data until database tables are set up
+      const mockCampaigns = getMockData('campaigns');
+      setCampaigns(mockCampaigns);
+
+      // When database tables are set up, uncomment this code:
+      /*
       const { data, error } = await supabase
         .from('ad_campaigns')
         .select('*')
@@ -46,6 +54,7 @@ const Campaigns = () => {
       
       if (error) throw error;
       setCampaigns(data || []);
+      */
     } catch (error) {
       console.error('Error fetching campaigns:', error);
       toast({
@@ -62,6 +71,14 @@ const Campaigns = () => {
     const newStatus = campaign.status === 'active' ? 'paused' : 'active';
     
     try {
+      // Mock update for now
+      const updatedCampaigns = campaigns.map((c: any) => 
+        c.id === campaign.id ? { ...c, status: newStatus } : c
+      );
+      setCampaigns(updatedCampaigns);
+      
+      // When database tables are set up, uncomment this code:
+      /*
       const { error } = await supabase
         .from('ad_campaigns')
         .update({ status: newStatus })
@@ -73,6 +90,7 @@ const Campaigns = () => {
       setCampaigns(campaigns.map((c: any) => 
         c.id === campaign.id ? { ...c, status: newStatus } : c
       ));
+      */
       
       toast({
         title: "Success",
@@ -92,6 +110,12 @@ const Campaigns = () => {
     if (!window.confirm("Are you sure you want to delete this campaign?")) return;
     
     try {
+      // Mock delete for now
+      const filteredCampaigns = campaigns.filter((campaign: any) => campaign.id !== id);
+      setCampaigns(filteredCampaigns);
+      
+      // When database tables are set up, uncomment this code:
+      /*
       const { error } = await supabase
         .from('ad_campaigns')
         .delete()
@@ -101,6 +125,7 @@ const Campaigns = () => {
       
       // Remove from local state
       setCampaigns(campaigns.filter((campaign: any) => campaign.id !== id));
+      */
       
       toast({
         title: "Success",
