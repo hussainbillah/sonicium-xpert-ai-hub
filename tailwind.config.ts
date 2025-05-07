@@ -20,7 +20,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
+				sans: ['Poppins', 'sans-serif'],
+				inter: ['Inter', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -82,7 +84,21 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				xl: '0.75rem',
+				'2xl': '1rem',
+				'3xl': '1.5rem',
+			},
+			boxShadow: {
+				'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+				'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+				'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
+				'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+				'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+				'2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+				'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+				'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
+				'card': '0 4px 12px rgba(0, 0, 0, 0.05)',
 			},
 			keyframes: {
 				"accordion-down": {
