@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   LayoutDashboard, FileText, Users, Settings, LogOut,
   Database, BarChart2, Menu, X, ChevronRight, Wrench,
-  Search, Bell, Globe, CreditCard, Layers, ActivitySquare
+  Search, Bell, Globe, CreditCard, Layers, ActivitySquare, User
 } from "lucide-react";
 import { 
   DropdownMenu,
