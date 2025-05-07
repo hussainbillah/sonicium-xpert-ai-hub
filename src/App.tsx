@@ -23,6 +23,7 @@ import SuperAdminLogin from "./pages/SuperAdminLogin";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import SuperAdminPages from "./pages/SuperAdminPages";
 import SuperAdminUsers from "./pages/SuperAdminUsers";
+import SuperAdminIntegrations from "./pages/SuperAdminIntegrations";
 
 // Create a mock database provider to handle the current lack of database tables
 const mockCampaignData = [
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
             <Route path="/super-admin/pages" element={<SuperAdminPages />} />
             <Route path="/super-admin/admins" element={<SuperAdminUsers />} />
+            <Route path="/super-admin/integrations" element={<SuperAdminIntegrations />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
