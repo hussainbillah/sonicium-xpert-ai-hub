@@ -17,6 +17,7 @@ import Subscription from "./pages/Subscription";
 import Admin from "./pages/Admin";
 import SEODashboard from "./pages/SEODashboard";
 import MarketingDashboard from "./pages/MarketingDashboard";
+import VeraionDashboard from "./pages/VeraionDashboard";
 import NotFound from "./pages/NotFound";
 // Super Admin imports
 import SuperAdminLogin from "./pages/SuperAdminLogin";
@@ -93,6 +94,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/seo-dashboard" element={<SEODashboard />} />
             <Route path="/marketing-dashboard" element={<MarketingDashboard />} />
+            <Route path="/veraion-dashboard" element={<VeraionDashboard />} />
             
             {/* Super Admin Routes */}
             <Route path="/super-admin/login" element={<SuperAdminLogin />} />
